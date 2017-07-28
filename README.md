@@ -12,6 +12,8 @@ How-to:
 
 - /pixelcenter set to set your respawn point to the nearest node (within range set in .conf).
 
+- IMPORTANT: Nodes will only save to file when stopping the server (/stop).
+
 Permission Node: 
 
 pixelcenter.command.add
