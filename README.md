@@ -44,4 +44,4 @@ pixelcenter.command.default
 
 //TODO//
 
-- Fix respawning when disconnecting and reconnecting on death screen.
+- Update respawn location to the default node on join for new players.
