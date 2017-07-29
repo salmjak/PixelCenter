@@ -1,4 +1,4 @@
-"# PixelCenter" 
+"# PixelCenter for Pixelmon 5.1.2 - Minecraft 1.10.2" 
 
 What is it:
 
