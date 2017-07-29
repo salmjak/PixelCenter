@@ -21,7 +21,7 @@ How-to:
 
 - /pixelcenter list to list all node coordinates.
 
-- /pixelcenter tp to teleport to the nearest node (euclidean distance).
+- /pixelcenter tp to teleport to the set node or the default node.
 
 - /pixelcenter set to set your respawn point to the nearest node (within range set in .conf).
 
