@@ -40,3 +40,8 @@ pixelcenter.command.set
 pixelcenter.command.tp
 
 pixelcenter.command.default
+
+
+//TODO//
+
+- Fix respawning when disconnecting and reconnecting on death screen.
