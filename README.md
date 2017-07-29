@@ -2,7 +2,7 @@
 
 What is it:
 
-PixelCenter is a sidemod I made during the time sidemod downloads were down to replace the sidemod Safeplace.
+PixelCenter is a sidemod/server-plugin I made during the time sidemod downloads were down to replace the sidemod Safeplace.
 
 Features:
 
