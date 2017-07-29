@@ -48,6 +48,11 @@ public class TeleportUtility {
                } 
                else 
                {
+                    if(NodeGeneralUtility.EuclidianDistance(default_pos, NodeGeneralUtility.ConvertFlowVector3d(p.getLocation().getPosition())) < minDistance)
+                    {
+                       //Player too close to spawn.
+                       return; 
+                    }
                     p.setLocationSafely(p.getLocation().setPosition(NodeGeneralUtility.ConvertJavaVector3d(default_pos)));
                     String logMsg = "Teleported to node at position " + pos.x + ", " + pos.y + ", " + pos.z + ".";
                     p.sendMessage(Text.of(logMsg));
