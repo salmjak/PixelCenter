@@ -71,7 +71,7 @@ import org.spongepowered.api.text.Text;
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.1.6",
+        version = "0.1.7",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"

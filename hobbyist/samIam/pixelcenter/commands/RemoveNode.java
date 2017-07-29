@@ -2,6 +2,7 @@ package hobbyist.samIam.pixelcenter.commands;
 
 import hobbyist.samIam.pixelcenter.PixelCenter;
 import hobbyist.samIam.pixelcenter.utility.NodeGeneralUtility;
+import hobbyist.samIam.pixelcenter.utility.NodeReadWriteUtility;
 import javax.vecmath.Vector3d;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -35,6 +36,8 @@ public class RemoveNode implements CommandExecutor
             String logMsg = "Removed node at position " + closest_node.x + ", " + closest_node.y + ", " + closest_node.z + ".";
             PixelCenter.log.info(logMsg);
             p.sendMessage(Text.of(logMsg));
+            
+            NodeReadWriteUtility.NodesToFile();
         } 
         else 
         {
