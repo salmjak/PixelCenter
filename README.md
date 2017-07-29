@@ -2,7 +2,7 @@
 
 How-to: 
 
-- Use command /pixelcenter add to add the position you're standing on to the node list.
+- /pixelcenter add to add the position you're standing on to the node list.
 
 - /pixelcenter remove to remove the nearest node (euclidean distance).
 
@@ -12,7 +12,7 @@ How-to:
 
 - /pixelcenter set to set your respawn point to the nearest node (within range set in .conf).
 
-- IMPORTANT: Nodes will only save to file when stopping the server (/stop).
+- /pixelcenter default to set nearest node to the default respawn point.
 
 Permission Node: 
 
@@ -25,3 +25,5 @@ pixelcenter.command.list
 pixelcenter.command.set
 
 pixelcenter.command.tp
+
+pixelcenter.command.default
