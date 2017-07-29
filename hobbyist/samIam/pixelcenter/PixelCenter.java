@@ -13,6 +13,7 @@ import hobbyist.samIam.pixelcenter.commands.AddNode;
 import hobbyist.samIam.pixelcenter.commands.List;
 import hobbyist.samIam.pixelcenter.commands.Manager;
 import hobbyist.samIam.pixelcenter.commands.RemoveNode;
+import hobbyist.samIam.pixelcenter.commands.SetDefault;
 import hobbyist.samIam.pixelcenter.commands.SetRespawn;
 import hobbyist.samIam.pixelcenter.commands.TeleportSpawn;
 import hobbyist.samIam.pixelcenter.utility.CheckPlayerUtility;
@@ -54,6 +55,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -69,9 +71,9 @@ import org.spongepowered.api.text.Text;
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.1.5",
+        version = "0.1.6",
         dependencies = @Dependency(id = "pixelmon"),
-        description = "Like SafePlace, but worse (not guaranteed).",
+        description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
         
         //Thanks to XpanD for helping me start up this project.
@@ -87,6 +89,7 @@ public class PixelCenter {
     private String path = "data" + separator + "PixelCenter" + separator;
     private String fileName = "list.nodes";
     public Path saveFile = Paths.get(path, fileName);
+    public Path defaultNodeFile = Paths.get(path, "default.node");
     public Path userDataPath = Paths.get(path + "Userdata" + separator);
     
     public Path configPath = Paths.get("config" + separator + "PixelCenter.conf");
@@ -101,13 +104,13 @@ public class PixelCenter {
     public void onConstruction(GameConstructionEvent event)
     {   
         instance = this;
-        NodeReadWriteUtility.instance = new NodeReadWriteUtility();
+        NodeReadWriteUtility.CreateFilesAndDirectories();
     }
     
     //Load files
     @Listener
     public void onInitialization(GameInitializationEvent event){
-        NodeReadWriteUtility.instance.NodesFromFile();
+        NodeReadWriteUtility.NodesFromFile();
         CommandSpec command_manager = CommandSpec.builder()
         .description(Text.of("PixelCenter"))
         .permission("pixelcenter.command.manager")
@@ -116,6 +119,7 @@ public class PixelCenter {
         .child(listNodes, "list")
         .child(setSpawn, "set")
         .child(tpSpawn, "tp")
+        .child(setDefault, "default")
         .executor(new Manager())
         .build();
         
@@ -152,13 +156,23 @@ public class PixelCenter {
         // (There's a guide for that)
         Timer time = new Timer();
         //Delay and repetition in milliseconds
-        time.schedule(new CheckPlayerTeamsTask(), 1000, 1000);
+        time.schedule(new CheckPlayerTeamsTask(), 3000, 3000);
     }
     
     @Listener
     public void onServerStopped(GameStoppedServerEvent event){
         //Save the list of nodes to file when server stops
-        NodeReadWriteUtility.instance.NodesToFile();
+        NodeReadWriteUtility.NodesToFile();
+    }
+    
+    //When a player dies they should be TPed to the set PixelCenter
+    @Listener
+    public void onDeath(RespawnPlayerEvent event)
+    {
+        if(event.isDeath())
+        {
+            TeleportUtility.TeleportSpawn(event.getTargetEntity());
+        }
     }
     
     class CheckPlayerTeamsTask extends TimerTask
@@ -199,7 +213,14 @@ public class PixelCenter {
     private CommandSpec setSpawn = CommandSpec.builder()
     .description(Text.of("Set spawn position to nearest PixelCenter (in range)"))
     .permission("pixelcenter.command.set")
+    .arguments(GenericArguments.optionalWeak(GenericArguments.player(Text.of("player"))))
     .executor(new SetRespawn())
+    .build();
+    
+    private CommandSpec setDefault = CommandSpec.builder()
+    .description(Text.of("Set nearest PixelCenter to the default PC for all new players."))
+    .permission("pixelcenter.command.default")
+    .executor(new SetDefault())
     .build();
     
     private CommandSpec tpSpawn = CommandSpec.builder()

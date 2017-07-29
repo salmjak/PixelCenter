@@ -37,9 +37,21 @@ public class TeleportUtility {
         } 
         else 
         {
-           Vector3d pos = NodeReadWriteUtility.instance.TryGetSavedVector3d(p.getUniqueId());
+           Vector3d pos = NodeReadWriteUtility.TryGetSavedVector3d(p.getUniqueId());
            if(pos == null){
-               p.sendMessage(Text.of("No PixelCenter is set as spawn."));
+               
+               Vector3d default_pos = NodeReadWriteUtility.TryGetDefaultVector3d();
+               
+               if(default_pos == null)
+               {
+                p.sendMessage(Text.of("No PixelCenter is set as spawn."));
+               } 
+               else 
+               {
+                    p.setLocationSafely(p.getLocation().setPosition(NodeGeneralUtility.ConvertJavaVector3d(default_pos)));
+                    String logMsg = "Teleported to node at position " + pos.x + ", " + pos.y + ", " + pos.z + ".";
+                    p.sendMessage(Text.of(logMsg));
+               }
                return;
            }
            

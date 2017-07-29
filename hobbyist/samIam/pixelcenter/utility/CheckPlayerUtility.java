@@ -37,16 +37,16 @@ public class CheckPlayerUtility {
                 }
             }
             
-            int score = 0;
+            int numFainted = 0;
             for(NBTTagCompound poke : pokemon_party)
             {
                 if(poke.getInteger(NbtKeys.HEALTH) <= 0)
                 {
-                    score++;
+                    numFainted++;
                 }
             }
             
-            if(score/pokemon_party.size() >= 1.0)
+            if(numFainted == pokemon_party.size())
             {
                 return true;
             }

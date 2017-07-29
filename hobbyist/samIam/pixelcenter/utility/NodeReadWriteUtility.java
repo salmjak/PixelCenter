@@ -20,9 +20,8 @@ import java.util.logging.Logger;
 import javax.vecmath.Vector3d;
 
 public class NodeReadWriteUtility {
-    public static NodeReadWriteUtility instance;
-    
-    public NodeReadWriteUtility()
+    //Create files and directories if they don't already exist.
+    public static void CreateFilesAndDirectories()
     {
         //Check if the directories exists, otherwise create it.
         if(!Files.exists(PixelCenter.instance.saveFile.getParent()))
@@ -63,6 +62,15 @@ public class NodeReadWriteUtility {
                 Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        if(!Files.exists(PixelCenter.instance.defaultNodeFile))
+        {
+            try 
+            {
+                Files.createFile(PixelCenter.instance.defaultNodeFile);
+            } catch (IOException ex) {
+                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         if(!Files.exists(PixelCenter.instance.configPath))
         {
             try 
@@ -86,7 +94,7 @@ public class NodeReadWriteUtility {
         }
     }
     
-    public Vector3d TryGetSavedVector3d(UUID playerID)
+    public static Vector3d TryGetSavedVector3d(UUID playerID)
     {
         //Check is the user has a file associated with it's UUID
         if(Files.exists(Paths.get(PixelCenter.instance.userDataPath.toString(), playerID.toString()+".dat")))
@@ -115,7 +123,35 @@ public class NodeReadWriteUtility {
         return null;
     }
     
-    public void SaveUserData(UUID playerID, Vector3d pos)
+    public static Vector3d TryGetDefaultVector3d()
+    {
+       if(Files.exists(PixelCenter.instance.defaultNodeFile))
+        {
+            try
+            {
+                BufferedReader reader = new  BufferedReader(new FileReader(PixelCenter.instance.defaultNodeFile.toFile()));
+                String stringData = reader.readLine();
+                if(stringData == null || stringData.isEmpty())
+                {
+                    return null;
+                }
+                
+                stringData = stringData.replace("null", "");
+                reader.close();
+                
+                Vector3d pos = stringToPos(stringData);
+                return pos;
+            } 
+            catch(IOException ex)
+            {
+                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+            
+        return null; 
+    }
+    
+    public static void SaveUserData(UUID playerID, Vector3d pos)
     {
         Path userPath = Paths.get(PixelCenter.instance.userDataPath.toString(), playerID.toString()+".dat");
         
@@ -144,7 +180,7 @@ public class NodeReadWriteUtility {
 
     }
     
-    public void NodesFromFile(){
+    public static void NodesFromFile(){
         try
         {
             BufferedReader reader = new  BufferedReader(new FileReader(PixelCenter.instance.saveFile.toFile()));
@@ -167,7 +203,7 @@ public class NodeReadWriteUtility {
         }
     }
     
-    public void NodesToFile(){
+    public static void NodesToFile(){
         //Hashset does not allow duplicates, use a linked hashset to retain order.
         Set<Vector3d> AllNodes = new LinkedHashSet<Vector3d>(20);
         try
@@ -214,7 +250,7 @@ public class NodeReadWriteUtility {
         }
     }
     
-    Vector3d stringToPos(String s)
+    public static Vector3d stringToPos(String s)
     {
         Vector3d v3 = new Vector3d();
         String[] posStrings = s.split(":");
@@ -226,7 +262,7 @@ public class NodeReadWriteUtility {
         return v3;
     }
     
-    String posToString(Vector3d pos){
+    public static String posToString(Vector3d pos){
         String s = "";
         
         s += String.valueOf(pos.x);
