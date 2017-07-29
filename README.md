@@ -1,5 +1,18 @@
 "# PixelCenter" 
 
+What is it:
+
+PixelCenter is a sidemod I made during the time sidemod downloads were down to replace the sidemod Safeplace.
+
+Features:
+
+- Add nodes which players will teleport to when: They die or Their whole team has fainted. (Remember to set a default node)
+
+- Choose if players have to be within a certain range of the node to set it or if it should just choose the nearest node, wherever it might be.
+
+- Hook up a command-block to the Pixelmon Healers and use /pixelcenter set @p to simulate the system in the original pokemon games.
+
+
 How-to: 
 
 - /pixelcenter add to add the position you're standing on to the node list.
