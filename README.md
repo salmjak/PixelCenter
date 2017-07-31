@@ -23,7 +23,7 @@ How-to:
 
 - /pixelcenter tp to teleport to the set node or the default node.
 
-- /pixelcenter set to set your respawn point to the nearest node (within range set in .conf).
+- /pixelcenter set to set your respawn point to the nearest node (within range set in .conf, euclidian distance).
 
 - /pixelcenter default to set nearest node to the default respawn point.
 
@@ -40,8 +40,3 @@ pixelcenter.command.set
 pixelcenter.command.tp
 
 pixelcenter.command.default
-
-
-//TODO//
-
-- Update respawn location to the default node on join for new players.
