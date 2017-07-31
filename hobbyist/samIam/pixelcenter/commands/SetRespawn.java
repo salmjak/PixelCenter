@@ -5,17 +5,13 @@ import hobbyist.samIam.pixelcenter.utility.NodeGeneralUtility;
 import hobbyist.samIam.pixelcenter.utility.NodeReadWriteUtility;
 import java.util.UUID;
 import javax.vecmath.Vector3d;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
 public class SetRespawn implements CommandExecutor
 {
@@ -24,6 +20,7 @@ public class SetRespawn implements CommandExecutor
     
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        
         if(src instanceof Player){
             Player p = (Player)src;
             Set(p);
@@ -60,6 +57,7 @@ public class SetRespawn implements CommandExecutor
             if(NodeGeneralUtility.EuclidianDistance(pos, closest) <= maxRange)
             {
                 Save(p.getUniqueId(), closest);
+                
                 p.sendMessage(Text.of("Position " + closest.x +", " + closest.y + ", " + closest.z + " has been set as spawn"));
             } 
             else 
@@ -70,6 +68,7 @@ public class SetRespawn implements CommandExecutor
         else 
         {
             Save(p.getUniqueId(), closest);
+                
             p.sendMessage(Text.of("Position " + closest.x +", " + closest.y + ", " + closest.z + " has been set as spawn"));
         }
     }

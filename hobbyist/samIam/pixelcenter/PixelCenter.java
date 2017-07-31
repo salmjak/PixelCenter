@@ -3,12 +3,6 @@ package hobbyist.samIam.pixelcenter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.pixelmonmod.pixelmon.config.PixelmonEntityList;
-import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
-import com.pixelmonmod.pixelmon.enums.EnumPokemon;
-import com.pixelmonmod.pixelmon.storage.NbtKeys;
-import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
-import com.pixelmonmod.pixelmon.storage.PlayerStorage;
 import hobbyist.samIam.pixelcenter.commands.AddNode;
 import hobbyist.samIam.pixelcenter.commands.List;
 import hobbyist.samIam.pixelcenter.commands.Manager;
@@ -17,43 +11,29 @@ import hobbyist.samIam.pixelcenter.commands.SetDefault;
 import hobbyist.samIam.pixelcenter.commands.SetRespawn;
 import hobbyist.samIam.pixelcenter.commands.TeleportSpawn;
 import hobbyist.samIam.pixelcenter.utility.CheckPlayerUtility;
+import hobbyist.samIam.pixelcenter.utility.NodeGeneralUtility;
 import hobbyist.samIam.pixelcenter.utility.NodeReadWriteUtility;
 import hobbyist.samIam.pixelcenter.utility.TeleportUtility;
-import info.pixelmon.repack.ninja.leaping.configurate.ConfigurationNode;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import java.util.logging.Level;
 import javax.vecmath.Vector3d;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraft.world.World;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
@@ -62,16 +42,14 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.text.Text;
 
-//TODO: Save world name together with location and then use it when teleporting.
 
 @Plugin
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.1.8",
+        version = "0.0.1",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
@@ -151,9 +129,6 @@ public class PixelCenter {
     
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        // Hey! The server has started!
-        // Try instantiating your logger in here.
-        // (There's a guide for that)
         Timer time = new Timer();
         //Delay and repetition in milliseconds
         time.schedule(new CheckPlayerTeamsTask(), 3000, 3000);
@@ -165,13 +140,22 @@ public class PixelCenter {
         NodeReadWriteUtility.NodesToFile();
     }
     
-    //When a player dies they should be TPed to the set PixelCenter
     @Listener
     public void onDeath(RespawnPlayerEvent event)
     {
         if(event.isDeath())
         {
-            TeleportUtility.TeleportSpawn(event.getTargetEntity());
+            Transform t = event.getToTransform();
+            Vector3d spawn = TeleportUtility.GetSpawnOrDefaultOrNull(event.getTargetEntity());
+            if(spawn != null)
+            {
+                t = t.setPosition(NodeGeneralUtility.ConvertJavaVector3d(spawn));
+                event.setToTransform(t);
+            } 
+            else 
+            {
+                event.getTargetEntity().sendMessage(Text.of("Could not find a spawn point."));
+            }
         }
     }
     

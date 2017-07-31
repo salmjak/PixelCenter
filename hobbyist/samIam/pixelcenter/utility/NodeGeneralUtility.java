@@ -1,7 +1,5 @@
 package hobbyist.samIam.pixelcenter.utility;
 
-import hobbyist.samIam.pixelcenter.PixelCenter;
-import java.util.Collection;
 import javax.vecmath.Vector3d;
 
 
