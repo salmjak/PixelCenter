@@ -12,6 +12,7 @@ import hobbyist.samIam.pixelcenter.commands.SetRespawn;
 import hobbyist.samIam.pixelcenter.commands.TeleportSpawn;
 import hobbyist.samIam.pixelcenter.utility.CheckPlayerUtility;
 import hobbyist.samIam.pixelcenter.utility.NodeReadWriteUtility;
+import hobbyist.samIam.pixelcenter.utility.NodeGeneralUtility;
 import hobbyist.samIam.pixelcenter.utility.TeleportUtility;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -27,6 +28,8 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -50,7 +53,7 @@ import net.minecraft.entity.player.EntityPlayer;
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.0.2",
+        version = "0.0.3",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
@@ -143,10 +146,29 @@ public class PixelCenter {
     }
     
     @Listener
-    public void onServerStopped(GameStoppedServerEvent event){
+    public void onServerStopped(GameStoppedServerEvent event)
+    {
         //Save the list of nodes to file when server stops
         NodeReadWriteUtility.NodesToFile();
         scheduler.shutdown();
+    }
+    
+    @Listener
+    public void onPlayerRespawn(RespawnPlayerEvent event)
+    {
+        if(event.isDeath())
+        {
+            Vector3d spawn = TeleportUtility.GetSpawnOrDefaultOrNull(event.getTargetEntity());
+            if(spawn != null)
+            {
+                Transform t = event.getToTransform();
+                t = t.setPosition(NodeGeneralUtility.ConvertJavaVector3d(spawn));
+                
+                event.setToTransform(t);
+            } else {
+                event.getTargetEntity().sendMessage(Text.of("Failed to find spawn point. Using world spawn."));
+            }
+        }
     }
     
     @SubscribeEvent
