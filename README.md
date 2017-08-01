@@ -14,10 +14,6 @@ Features:
 
 - Hook up a command-block to the Pixelmon Healers and use /pixelcenter set @p to simulate the system in the original pokemon games.
 
-Known bugs:
-
-- Teleport on faint won't work sometimes if the distance to spawn is too great.
-
 
 How-to: 
 
@@ -33,7 +29,8 @@ How-to:
 
 - /pixelcenter default to set nearest node to the default respawn point.
 
-Permission Node: 
+
+Permission Nodes: 
 
 pixelcenter.command.add
 
