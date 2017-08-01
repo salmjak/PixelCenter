@@ -69,27 +69,6 @@ public class NodeReadWriteUtility {
                 Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        if(!Files.exists(PixelCenter.instance.configPath))
-        {
-            try 
-            {
-                Files.createFile(PixelCenter.instance.configPath);
-                //Write initial config text
-                try
-                {
-                    PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(PixelCenter.instance.configPath.toFile())));
-                    
-                    writer.close();
-                } 
-                catch(IOException ex)
-                {
-                    Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-            } catch (IOException ex) {
-                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
     }
     
     public static Vector3d TryGetSavedVector3d(UUID playerID)

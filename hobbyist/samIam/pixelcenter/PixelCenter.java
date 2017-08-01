@@ -11,7 +11,6 @@ import hobbyist.samIam.pixelcenter.commands.SetDefault;
 import hobbyist.samIam.pixelcenter.commands.SetRespawn;
 import hobbyist.samIam.pixelcenter.commands.TeleportSpawn;
 import hobbyist.samIam.pixelcenter.utility.CheckPlayerUtility;
-import hobbyist.samIam.pixelcenter.utility.NodeGeneralUtility;
 import hobbyist.samIam.pixelcenter.utility.NodeReadWriteUtility;
 import hobbyist.samIam.pixelcenter.utility.TeleportUtility;
 import java.io.IOException;
@@ -19,8 +18,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 import javax.vecmath.Vector3d;
 
@@ -33,9 +30,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -43,13 +38,19 @@ import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
-
+import org.spongepowered.api.scheduler.SpongeExecutorService;
+import com.pixelmonmod.pixelmon.api.events.PlayerBattleEndedEvent;
+import com.pixelmonmod.pixelmon.api.events.PlayerBattleEndedAbnormalEvent;
+import com.pixelmonmod.pixelmon.Pixelmon;
+import java.util.concurrent.TimeUnit;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.entity.player.EntityPlayer;
 
 @Plugin
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.0.1",
+        version = "0.0.2",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
@@ -70,10 +71,11 @@ public class PixelCenter {
     public Path defaultNodeFile = Paths.get(path, "default.node");
     public Path userDataPath = Paths.get(path + "Userdata" + separator);
     
-    public Path configPath = Paths.get("config" + separator + "PixelCenter.conf");
+    public Path configPath = Paths.get("config" + separator + "PixelCenter.cfg");
     public ConfigurationLoader<CommentedConfigurationNode> configLoader = HoconConfigurationLoader.builder().setPath(configPath).build();
     
     public static PixelCenter instance;
+    SpongeExecutorService scheduler;
     
     public ArrayList<Vector3d> Nodes = new ArrayList<Vector3d>(20);
     public HashMap<UUID, Vector3d> userSpawnsInMemory = new HashMap<UUID, Vector3d>(20);
@@ -103,7 +105,7 @@ public class PixelCenter {
         
         Sponge.getCommandManager().register(this, command_manager, "pixelcenter", "pc");
         
-        //Load configs
+        //Load configs -- NOT WORKING FOR UNKNOWN REASONS
         CommentedConfigurationNode rootNode;
         try
         {
@@ -112,6 +114,7 @@ public class PixelCenter {
                 rootNode.setComment("PixelCenter Config");
                 rootNode.getNode("set", "useRange", "enabled").setValue(true);
                 rootNode.getNode("set", "useRange", "maxRange").setValue(20.0).setComment("The maximum range of blocks between the player and nearest spawn point. If the distance is larger than this the player can't set it as a spawn point.");
+                rootNode.getNode("teleport", "force", "enabled").setValue(true).setComment("If true then the plugin will continuously check the players team instead of only after a battle has ended.");
                 rootNode.getNode("teleport", "minDistance").setValue(20.0).setComment("The minimum distance between the spawn point and the player. If the distance is less than this it won't teleport the player to the point.");
                 configLoader.save(rootNode);
             }
@@ -120,46 +123,62 @@ public class PixelCenter {
                 rootNode = configLoader.load();
                 SetRespawn.useRange = rootNode.getNode("set", "useRange", "enabled").getBoolean();
                 SetRespawn.maxRange = rootNode.getNode("set", "useRange", "maxRange").getDouble();
+                TeleportUtility.isForced = rootNode.getNode("teleport", "force", "enabled").getBoolean();
                 TeleportUtility.minDistance = rootNode.getNode("teleport", "minDistance").getDouble();
             } 
         } catch(IOException e) {
-            // error
+            log.error("Failed to create config" + e.getMessage());
         }
+        
+        Pixelmon.EVENT_BUS.register(this);
     }
     
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        Timer time = new Timer();
-        //Delay and repetition in milliseconds
-        time.schedule(new CheckPlayerTeamsTask(), 3000, 3000);
+       if(TeleportUtility.isForced)
+       {
+           scheduler = Sponge.getScheduler().createSyncExecutor(this);
+           scheduler.scheduleAtFixedRate(new CheckPlayerTeams(), 5, 5, TimeUnit.SECONDS);
+       }
     }
     
     @Listener
     public void onServerStopped(GameStoppedServerEvent event){
         //Save the list of nodes to file when server stops
         NodeReadWriteUtility.NodesToFile();
+        scheduler.shutdown();
     }
     
-    @Listener
-    public void onDeath(RespawnPlayerEvent event)
+    @SubscribeEvent
+    public void onBattleEndedEvent(PlayerBattleEndedEvent event)
     {
-        if(event.isDeath())
+        Player p = (Player)event.player;
+        if(CheckPlayerUtility.playerTeamFainted(p))
         {
-            Transform t = event.getToTransform();
-            Vector3d spawn = TeleportUtility.GetSpawnOrDefaultOrNull(event.getTargetEntity());
-            if(spawn != null)
+            boolean success = TeleportUtility.TeleportSpawn(p);
+            if(!success)
             {
-                t = t.setPosition(NodeGeneralUtility.ConvertJavaVector3d(spawn));
-                event.setToTransform(t);
-            } 
-            else 
-            {
-                event.getTargetEntity().sendMessage(Text.of("Could not find a spawn point."));
+                log.info("Failed to teleport player " + p.getName() + " to spawn.");
             }
         }
     }
     
-    class CheckPlayerTeamsTask extends TimerTask
+    @SubscribeEvent
+    public void onBattleEndedAbnormalEvent(PlayerBattleEndedAbnormalEvent event)
+    {
+        Player p = (Player)event.player;
+        if(CheckPlayerUtility.playerTeamFainted(p))
+        {
+            boolean success = TeleportUtility.TeleportSpawn(p);
+            if(!success)
+            {
+                log.info("Failed to teleport player " + p.getName() + " to spawn.");
+            }
+        }
+        
+    }
+    
+    class CheckPlayerTeams implements Runnable
     {
         @Override
         public void run() {
@@ -168,7 +187,11 @@ public class PixelCenter {
             {
                 if(CheckPlayerUtility.playerTeamFainted(p))
                 {
-                    TeleportUtility.TeleportSpawn(p);
+                    boolean success = TeleportUtility.TeleportSpawn(p);
+                    if(!success)
+                    {
+                        log.info("Failed to teleport player " + p.getName() + " to spawn.");
+                    }
                 }
             }
         }
