@@ -30,16 +30,16 @@ How-to:
 - /pixelcenter default to set nearest node to the default respawn point.
 
 
-Permission Nodes: 
+Permission Nodes: (REC = Recommended group)
 
-pixelcenter.command.add
+pixelcenter.command.add //REC: ADMIN
 
-pixelcenter.command.remove
+pixelcenter.command.remove //REC: ADMIN
 
-pixelcenter.command.list
+pixelcenter.command.list //REC: USER
 
-pixelcenter.command.set
+pixelcenter.command.set //REC: USER
 
-pixelcenter.command.tp
+pixelcenter.command.tp  //REC: Your choice
 
-pixelcenter.command.default
+pixelcenter.command.default //REC: ADMIN
