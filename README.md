@@ -1,4 +1,6 @@
-"# PixelCenter for Pixelmon 5.1.2 - Minecraft 1.10.2" 
+# PixelCenter
+
+#For Pixelmon 5.1.2 - Minecraft 1.10.2 - Sponge API 5.1.0#
 
 What is it:
 
