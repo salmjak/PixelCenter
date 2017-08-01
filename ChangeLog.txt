@@ -1,0 +1,6 @@
+Version 0.0.2
+
+	- Fixed bug causing players not to be sent to spawn if distance was too great (presumably the chunk wasn't loaded and further calls to the method cancelled previous calls, probably due to calling it from a background thread).
+		- Changed from using Java timer/timer task to using SpongeExecutorService and synchronous executor to solve this.
+		- Added config option to force a player to spawn if whole team is fainted (i.e. using SpongeExecutorService to contionously check all players, enabled by default).
+	- Started listening to "PlayerBattleEndedEvent" and "PlayerBattleEndedAbnormalEvent" to check if a team has fainted after a battle (will be the core functionality if teleport-force is disabled in options).
