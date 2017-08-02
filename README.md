@@ -36,7 +36,7 @@ pixelcenter.command.add //REC: ADMIN
 
 pixelcenter.command.remove //REC: ADMIN
 
-pixelcenter.command.list //REC: USER
+pixelcenter.command.list //REC: Your choice.
 
 pixelcenter.command.set //REC: USER
 
