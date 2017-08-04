@@ -1,3 +1,6 @@
+Version 0.0.4
+	- Cleaned up the code a bit (especially reworked CheckPlayerUtility by implementing Pixelmon API methods).
+
 Version 0.0.3
 	- Had accidentally removed the RespawnPlayerEvent listener. Re-added.
 
