@@ -54,7 +54,7 @@ import org.spongepowered.api.config.DefaultConfig;
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.0.4",
+        version = "0.0.5",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
@@ -104,7 +104,6 @@ public class PixelCenter {
         NodeReadWriteUtility.NodesFromFile();
         CommandSpec command_manager = CommandSpec.builder()
         .description(Text.of("PixelCenter"))
-        .permission("pixelcenter.command.manager")
         .child(addNode, "add")
         .child(removeNode, "remove")
         .child(listNodes, "list")
