@@ -1,5 +1,7 @@
 package hobbyist.samIam.pixelcenter;
 
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -26,7 +28,6 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.entity.Transform;
@@ -47,13 +48,13 @@ import com.pixelmonmod.pixelmon.api.events.PlayerBattleEndedAbnormalEvent;
 import com.pixelmonmod.pixelmon.Pixelmon;
 import java.util.concurrent.TimeUnit;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.entity.player.EntityPlayer;
+import org.spongepowered.api.config.DefaultConfig;
 
 @Plugin
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.0.3",
+        version = "0.0.4",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
@@ -62,9 +63,19 @@ import net.minecraft.entity.player.EntityPlayer;
 )
 public class PixelCenter {
     
-    // Setup Logger
-    private static final String name = "PixelCenter";
-    public static final Logger log = LoggerFactory.getLogger(name);
+    @Inject
+    public Logger log;
+    
+    public static Logger getLogger()
+    {
+        return PixelCenter.instance.log;
+    }
+    
+    @Inject
+    @DefaultConfig(sharedRoot=true)
+    public Path configPath;
+    
+    public ConfigurationLoader<CommentedConfigurationNode> configLoader;
 
     // Setup file-paths.
     private String separator = FileSystems.getDefault().getSeparator();
@@ -73,15 +84,12 @@ public class PixelCenter {
     public Path saveFile = Paths.get(path, fileName);
     public Path defaultNodeFile = Paths.get(path, "default.node");
     public Path userDataPath = Paths.get(path + "Userdata" + separator);
-    
-    public Path configPath = Paths.get("config" + separator + "PixelCenter.cfg");
-    public ConfigurationLoader<CommentedConfigurationNode> configLoader = HoconConfigurationLoader.builder().setPath(configPath).build();
-    
+     
     public static PixelCenter instance;
     SpongeExecutorService scheduler;
     
-    public ArrayList<Vector3d> Nodes = new ArrayList<Vector3d>(20);
-    public HashMap<UUID, Vector3d> userSpawnsInMemory = new HashMap<UUID, Vector3d>(20);
+    public ArrayList<Vector3d> Nodes = new ArrayList<>();
+    public HashMap<UUID, Vector3d> userSpawnsInMemory = new HashMap<>();
 
     @Listener //Create singleton-patterns
     public void onConstruction(GameConstructionEvent event)
@@ -108,7 +116,8 @@ public class PixelCenter {
         
         Sponge.getCommandManager().register(this, command_manager, "pixelcenter", "pc");
         
-        //Load configs -- NOT WORKING FOR UNKNOWN REASONS
+        //Load configs
+        configLoader = HoconConfigurationLoader.builder().setPath(configPath).build();
         CommentedConfigurationNode rootNode;
         try
         {
@@ -124,13 +133,15 @@ public class PixelCenter {
             else
             {
                 rootNode = configLoader.load();
-                SetRespawn.useRange = rootNode.getNode("set", "useRange", "enabled").getBoolean();
-                SetRespawn.maxRange = rootNode.getNode("set", "useRange", "maxRange").getDouble();
-                TeleportUtility.isForced = rootNode.getNode("teleport", "force", "enabled").getBoolean();
-                TeleportUtility.minDistance = rootNode.getNode("teleport", "minDistance").getDouble();
+                SetRespawn.useRange = rootNode.getNode("set", "useRange", "enabled").getBoolean(true);
+                SetRespawn.maxRange = rootNode.getNode("set", "useRange", "maxRange").getDouble(20.0);
+                TeleportUtility.isForced = rootNode.getNode("teleport", "force", "enabled").getBoolean(true);
+                TeleportUtility.minDistance = rootNode.getNode("teleport", "minDistance").getDouble(20.0);
             } 
-        } catch(IOException e) {
-            log.error("Failed to create config" + e.getMessage());
+        } 
+        catch(IOException e) 
+        {
+            log.error("Failed to create, save or load the config" + e.getMessage());
         }
         
         Pixelmon.EVENT_BUS.register(this);
@@ -143,6 +154,7 @@ public class PixelCenter {
            scheduler = Sponge.getScheduler().createSyncExecutor(this);
            scheduler.scheduleAtFixedRate(new CheckPlayerTeams(), 5, 5, TimeUnit.SECONDS);
        }
+       log.info("DEBUG: Server started. Plugin running.");
     }
     
     @Listener
@@ -174,47 +186,35 @@ public class PixelCenter {
     @SubscribeEvent
     public void onBattleEndedEvent(PlayerBattleEndedEvent event)
     {
-        Player p = (Player)event.player;
-        if(CheckPlayerUtility.playerTeamFainted(p))
-        {
-            boolean success = TeleportUtility.TeleportSpawn(p);
-            if(!success)
-            {
-                log.info("Failed to teleport player " + p.getName() + " to spawn.");
-            }
-        }
+        CheckTeamAndTP((Player)event.player);
     }
     
     @SubscribeEvent
     public void onBattleEndedAbnormalEvent(PlayerBattleEndedAbnormalEvent event)
     {
-        Player p = (Player)event.player;
-        if(CheckPlayerUtility.playerTeamFainted(p))
-        {
-            boolean success = TeleportUtility.TeleportSpawn(p);
-            if(!success)
-            {
-                log.info("Failed to teleport player " + p.getName() + " to spawn.");
-            }
-        }
-        
+        CheckTeamAndTP((Player)event.player);
     }
     
     class CheckPlayerTeams implements Runnable
     {
         @Override
         public void run() {
-            Player[] players = Sponge.getServer().getOnlinePlayers().toArray(new Player[0]);
+            ArrayList<Player> players = Lists.newArrayList(Sponge.getServer().getOnlinePlayers());
             for(Player p : players)
             {
-                if(CheckPlayerUtility.playerTeamFainted(p))
-                {
-                    boolean success = TeleportUtility.TeleportSpawn(p);
-                    if(!success)
-                    {
-                        log.info("Failed to teleport player " + p.getName() + " to spawn.");
-                    }
-                }
+                CheckTeamAndTP(p);
+            }
+        }
+    }
+    
+    void CheckTeamAndTP(Player p)
+    {
+        if(CheckPlayerUtility.playerTeamFainted(p))
+        {
+            boolean success = TeleportUtility.TeleportSpawn(p);
+            if(!success)
+            {
+                log.info("Failed to teleport player " + p.getName() + " to spawn.");
             }
         }
     }

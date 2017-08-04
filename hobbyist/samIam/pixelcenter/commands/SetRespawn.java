@@ -37,8 +37,8 @@ public class SetRespawn implements CommandExecutor
             } 
             else 
             {
-                String logMsg = "This command can't be used from console or command block.";
-                PixelCenter.log.info(logMsg);
+                String logMsg = "Invalid arguments (Player offline?)";
+                PixelCenter.getLogger().info(logMsg);
             }
             
         }
@@ -50,7 +50,7 @@ public class SetRespawn implements CommandExecutor
     private void Set(Player p)
     {
         Vector3d pos = NodeGeneralUtility.ConvertFlowVector3d(p.getLocation().getPosition());
-        Vector3d closest = NodeGeneralUtility.getClosest(pos, PixelCenter.instance.Nodes.toArray(new Vector3d[0]));
+        Vector3d closest = NodeGeneralUtility.getClosest(pos, PixelCenter.instance.Nodes);
 
         if(useRange)
         {

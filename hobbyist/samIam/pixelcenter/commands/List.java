@@ -26,7 +26,7 @@ public class List implements CommandExecutor {
         else 
         {
             for(Vector3d v3 : PixelCenter.instance.Nodes){
-                PixelCenter.log.info(v3.toString());
+                PixelCenter.getLogger().info(v3.toString());
             }
         }
         

@@ -32,18 +32,18 @@ public class SetDefault   implements CommandExecutor
             v3.y = p.getLocation().getY();
             v3.z = p.getLocation().getZ();
             
-            Vector3d closest = NodeGeneralUtility.getClosest(v3, PixelCenter.instance.Nodes.toArray(new Vector3d[0]));
+            Vector3d closest = NodeGeneralUtility.getClosest(v3, PixelCenter.instance.Nodes);
             
             Save(closest);
 
             String logMsg = "Set default node to node at position " + closest.x +", " + closest.y + ", " + closest.z + ".";
-            PixelCenter.log.info(logMsg);
+            PixelCenter.getLogger().info(logMsg);
             p.sendMessage(Text.of(logMsg));
         } 
         else 
         {
             String logMsg = "This command can't be used from console or command block.";
-            PixelCenter.log.info(logMsg);
+            PixelCenter.getLogger().info(logMsg);
         }
         
         return CommandResult.success();
@@ -59,7 +59,7 @@ public class SetDefault   implements CommandExecutor
         } 
         catch(IOException ex)
         {
-            Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+            PixelCenter.getLogger().info(Level.SEVERE + ex.toString());
         }
     }
 }

@@ -21,7 +21,7 @@ public class TeleportSpawn implements CommandExecutor{
         else 
         {
             String logMsg = "This command can't be used from console or command block.";
-            PixelCenter.log.info(logMsg);
+            PixelCenter.getLogger().info(logMsg);
         }
         
         return CommandResult.success();

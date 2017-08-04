@@ -29,12 +29,12 @@ public class RemoveNode implements CommandExecutor
             player_pos.y = p.getLocation().getY();
             player_pos.z = p.getLocation().getZ();
             
-            Vector3d closest_node = NodeGeneralUtility.getClosest(player_pos, PixelCenter.instance.Nodes.toArray(new Vector3d[0]));
+            Vector3d closest_node = NodeGeneralUtility.getClosest(player_pos, PixelCenter.instance.Nodes);
             
             PixelCenter.instance.Nodes.remove(closest_node);
             
             String logMsg = "Removed node at position " + closest_node.x + ", " + closest_node.y + ", " + closest_node.z + ".";
-            PixelCenter.log.info(logMsg);
+            PixelCenter.getLogger().info(logMsg);
             p.sendMessage(Text.of(logMsg));
             
             NodeReadWriteUtility.NodesToFile();
@@ -42,7 +42,7 @@ public class RemoveNode implements CommandExecutor
         else 
         {
             String logMsg = "This command can't be used from console or command block.";
-            PixelCenter.log.info(logMsg);
+            PixelCenter.getLogger().info(logMsg);
         }
         
         return CommandResult.success();

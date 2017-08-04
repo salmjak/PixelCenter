@@ -14,7 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.vecmath.Vector3d;
 
 public class NodeReadWriteUtility {
@@ -28,7 +27,7 @@ public class NodeReadWriteUtility {
             {
                 Files.createDirectories(PixelCenter.instance.saveFile.getParent());
             } catch (IOException ex) {
-                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+                PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
             }
         }
         if(!Files.exists(PixelCenter.instance.userDataPath))
@@ -37,7 +36,7 @@ public class NodeReadWriteUtility {
             {
                 Files.createDirectories(PixelCenter.instance.userDataPath);
             } catch (IOException ex) {
-                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+                PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
             }
         }
         if(!Files.exists(PixelCenter.instance.configPath.getParent()))
@@ -46,7 +45,7 @@ public class NodeReadWriteUtility {
             {
                 Files.createDirectories(PixelCenter.instance.configPath.getParent());
             } catch (IOException ex) {
-                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+                PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
             }
         }
         
@@ -57,7 +56,7 @@ public class NodeReadWriteUtility {
             {
                 Files.createFile(PixelCenter.instance.saveFile);
             } catch (IOException ex) {
-                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+                PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
             }
         }
         if(!Files.exists(PixelCenter.instance.defaultNodeFile))
@@ -66,19 +65,20 @@ public class NodeReadWriteUtility {
             {
                 Files.createFile(PixelCenter.instance.defaultNodeFile);
             } catch (IOException ex) {
-                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+                PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
             }
         }
     }
     
     public static Vector3d TryGetSavedVector3d(UUID playerID)
     {
+        Path userPath = Paths.get(PixelCenter.instance.userDataPath.toString(), playerID.toString()+".dat");
         //Check is the user has a file associated with it's UUID
-        if(Files.exists(Paths.get(PixelCenter.instance.userDataPath.toString(), playerID.toString()+".dat")))
+        if(Files.exists(userPath))
         {
             try
             {
-                BufferedReader reader = new  BufferedReader(new FileReader(PixelCenter.instance.saveFile.toFile()));
+                BufferedReader reader = new  BufferedReader(new FileReader(userPath.toFile()));
                 String stringData = reader.readLine();
                 if(stringData == null || stringData.isEmpty())
                 {
@@ -93,7 +93,7 @@ public class NodeReadWriteUtility {
             } 
             catch(IOException ex)
             {
-                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+                PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
             }
         } 
             
@@ -121,7 +121,7 @@ public class NodeReadWriteUtility {
             } 
             catch(IOException ex)
             {
-                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+                PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
             }
         } 
             
@@ -140,7 +140,7 @@ public class NodeReadWriteUtility {
             } 
             catch (IOException ex) 
             {
-                Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+                PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
             }
         }
         
@@ -152,7 +152,7 @@ public class NodeReadWriteUtility {
         } 
         catch(IOException ex)
         {
-            Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+            PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
         }
 
     }
@@ -176,7 +176,7 @@ public class NodeReadWriteUtility {
         } 
         catch(IOException ex) 
         {
-            Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+            PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
         }
     }
     
@@ -201,7 +201,7 @@ public class NodeReadWriteUtility {
         } 
         catch(IOException ex)
         {
-            Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+            PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
         }
         
         //Hashset does not allow duplicates
@@ -223,7 +223,7 @@ public class NodeReadWriteUtility {
         } 
         catch(IOException ex)
         {
-            Logger.getLogger(NodeReadWriteUtility.class.getName()).log(Level.SEVERE, null, ex);
+            PixelCenter.getLogger().info(Level.SEVERE +  ex.toString());
         }
     }
     

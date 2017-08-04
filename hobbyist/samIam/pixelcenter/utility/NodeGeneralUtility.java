@@ -1,12 +1,13 @@
 package hobbyist.samIam.pixelcenter.utility;
 
+import java.util.ArrayList;
 import javax.vecmath.Vector3d;
 
 
 public class NodeGeneralUtility {
     
-    public static Vector3d getClosest(Vector3d from, Vector3d[] to){
-        Vector3d closest_node = to[0];
+    public static Vector3d getClosest(Vector3d from, ArrayList<Vector3d> to){
+        Vector3d closest_node = to.get(0);
         double score = EuclidianDistance(from, closest_node);
 
         //Iterate over all nodes to get the closest one

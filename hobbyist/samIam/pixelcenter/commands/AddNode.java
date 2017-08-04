@@ -27,7 +27,7 @@ public class AddNode  implements CommandExecutor
             PixelCenter.instance.Nodes.add(v3);
 
             String logMsg = "Created a new node at position " + p.getLocation().getX() + ", " + p.getLocation().getY() + ", " + p.getLocation().getZ() + ".";
-            PixelCenter.log.info(logMsg);
+            PixelCenter.getLogger().info(logMsg);
             p.sendMessage(Text.of(logMsg));
             
             //Save to file
@@ -36,7 +36,7 @@ public class AddNode  implements CommandExecutor
         else 
         {
             String logMsg = "This command can't be used from console or command block.";
-            PixelCenter.log.info(logMsg);
+            PixelCenter.getLogger().info(logMsg);
         }
         
         return CommandResult.success();
