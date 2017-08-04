@@ -1,4 +1,5 @@
 Version 0.0.4
+	- BUG FIX: Fixed a bug where user-specific spawns were loaded incorrectly from file.
 	- Cleaned up the code a bit. Especially reworked CheckPlayerUtility by implementing Pixelmon API methods, making it easier to understand and follow.
 
 Version 0.0.3
