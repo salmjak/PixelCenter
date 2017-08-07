@@ -54,7 +54,7 @@ import org.spongepowered.api.config.DefaultConfig;
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.0.5",
+        version = "0.0.6",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
