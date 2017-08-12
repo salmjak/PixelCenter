@@ -38,7 +38,6 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
@@ -49,12 +48,13 @@ import com.pixelmonmod.pixelmon.Pixelmon;
 import java.util.concurrent.TimeUnit;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 
 @Plugin
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.0.6",
+        version = "0.0.7",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
@@ -157,7 +157,7 @@ public class PixelCenter {
     }
     
     @Listener
-    public void onServerStopped(GameStoppedServerEvent event)
+    public void onServerStopped(GameStoppingServerEvent event)
     {
         //Save the list of nodes to file when server stops
         NodeReadWriteUtility.NodesToFile();
