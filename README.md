@@ -1,6 +1,6 @@
 # PixelCenter
 
-#For Pixelmon 5.1.2 - Minecraft 1.10.2 - Sponge API 5.1.0#
+#For Pixelmon 8.0.2 - Minecraft 1.12.2 - Sponge API 7.2.0#
 
 What is it:
 
@@ -8,7 +8,7 @@ PixelCenter is a sidemod/server-plugin I made during the time sidemod downloads 
 
 Features:
 
-- Add nodes which players will teleport to when: They die or Their whole team has fainted. (Remember to set a default node)
+- Add nodes which players will teleport to when: They die or Their whole team has fainted. (WARNING: Remember to set a default node)
 
 - Choose if players have to be within a certain range of the node to set it or if it should just choose the nearest node, wherever it might be.
 
