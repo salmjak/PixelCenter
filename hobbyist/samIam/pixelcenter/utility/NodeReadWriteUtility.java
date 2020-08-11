@@ -148,6 +148,7 @@ public class NodeReadWriteUtility {
         {
             PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(userPath.toFile())));
             writer.println(posToString(pos));
+            writer.flush();
             writer.close();
         } 
         catch(IOException ex)
@@ -219,6 +220,8 @@ public class NodeReadWriteUtility {
                     writer.println(posToString(v3));
                 }
             }
+
+            writer.flush();
             writer.close();
         } 
         catch(IOException ex)
