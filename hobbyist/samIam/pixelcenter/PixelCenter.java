@@ -54,15 +54,15 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.0.7",
+        version = "0.0.8",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
-        
+
         //Thanks to XpanD for helping me start up this project.
 )
 public class PixelCenter {
-    
+
     @Inject
     public Logger log;
     
