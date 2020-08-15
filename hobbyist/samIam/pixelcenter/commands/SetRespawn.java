@@ -17,6 +17,8 @@ public class SetRespawn implements CommandExecutor
 {
     public static boolean useRange = true;
     public static double maxRange = 20.0;
+    public static boolean writeInChat = true;
+    public static String message = "Your respawn point was set.";
     
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -57,10 +59,12 @@ public class SetRespawn implements CommandExecutor
             if(NodeGeneralUtility.EuclidianDistance(pos, closest) <= maxRange)
             {
                 Save(p.getUniqueId(), closest);
-                
-                p.sendMessage(Text.of("Position " + closest.x +", " + closest.y + ", " + closest.z + " has been set as spawn"));
+                if (writeInChat)
+                {
+                	p.sendMessage(Text.of(message));
+                }
             } 
-            else 
+            else if (writeInChat)
             {
                 p.sendMessage(Text.of("You're too far from the closest spawn!"));
             }
@@ -68,8 +72,10 @@ public class SetRespawn implements CommandExecutor
         else 
         {
             Save(p.getUniqueId(), closest);
-                
-            p.sendMessage(Text.of("Position " + closest.x +", " + closest.y + ", " + closest.z + " has been set as spawn"));
+            if (writeInChat)
+            {
+            	p.sendMessage(Text.of("Position " + closest.x +", " + closest.y + ", " + closest.z + " has been set as spawn"));
+            }
         }
     }
     

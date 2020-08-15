@@ -54,7 +54,7 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.0.8",
+        version = "0.0.9",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
@@ -125,8 +125,12 @@ public class PixelCenter {
                 rootNode.setComment("PixelCenter Config");
                 rootNode.getNode("set", "useRange", "enabled").setValue(true);
                 rootNode.getNode("set", "useRange", "maxRange").setValue(20.0).setComment("The maximum range of blocks between the player and nearest spawn point. If the distance is larger than this the player can't set it as a spawn point.");
+                rootNode.getNode("set", "chat", "enabled").setValue(true).setComment("If true then the plugin will write message on the chat when the player's spawn is set.");
+                rootNode.getNode("set", "chat", "message").setValue("Your respawn point was set.").setComment("Message to write in chat when the player's spawn is set.");
                 rootNode.getNode("teleport", "force", "enabled").setValue(true).setComment("If true then the plugin will continuously check the players team instead of only after a battle has ended.");
                 rootNode.getNode("teleport", "minDistance").setValue(20.0).setComment("The minimum distance between the spawn point and the player. If the distance is less than this it won't teleport the player to the point.");
+                rootNode.getNode("teleport", "chat", "enabled").setValue(true).setComment("If true then the plugin will write message on the chat when the player is teleported.");
+                rootNode.getNode("teleport", "chat", "message").setValue("All your Pokémon fainted, you were teleported.").setComment("Message to write in chat when the player is teleported.");
                 configLoader.save(rootNode);
             }
             else
@@ -134,8 +138,12 @@ public class PixelCenter {
                 rootNode = configLoader.load();
                 SetRespawn.useRange = rootNode.getNode("set", "useRange", "enabled").getBoolean(true);
                 SetRespawn.maxRange = rootNode.getNode("set", "useRange", "maxRange").getDouble(20.0);
+                SetRespawn.writeInChat = rootNode.getNode("set", "chat", "enabled").getBoolean(true);
+                SetRespawn.message = rootNode.getNode("set", "chat", "message").getString("Your respawn point was set.");
                 TeleportUtility.isForced = rootNode.getNode("teleport", "force", "enabled").getBoolean(true);
                 TeleportUtility.minDistance = rootNode.getNode("teleport", "minDistance").getDouble(20.0);
+                TeleportUtility.writeInChat = rootNode.getNode("teleport", "chat", "enabled").getBoolean(true);
+                TeleportUtility.message = rootNode.getNode("teleport", "chat", "message").getString("All your Pokémon fainted, you were teleported.");
             } 
         } 
         catch(IOException e) 
