@@ -9,6 +9,8 @@ public class TeleportUtility {
 
     public static boolean isForced = true;
     public static double minDistance = 20.0;
+    public static boolean writeInChat = true;
+    public static String message = "All your Pokémon fainted, you were teleported.";
     
     public static boolean TeleportSpawn(Player p)
     {
@@ -33,9 +35,11 @@ public class TeleportUtility {
        //Check if the TP was successful.
        if(teleported)
        {
-            String logMsg = "Teleported to node at position " + pos.x + ", " + pos.y + ", " + pos.z + ".";
-            p.sendMessage(Text.of(logMsg));
-            return true;
+    	   if (writeInChat)
+    	   {
+    		   p.sendMessage(Text.of(message));
+    	   }
+           return true;
        } 
        else 
        {
