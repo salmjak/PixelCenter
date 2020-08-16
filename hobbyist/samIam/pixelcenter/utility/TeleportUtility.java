@@ -33,7 +33,7 @@ public class TeleportUtility {
        //Check if the TP was successful.
        if(teleported)
        {
-            String logMsg = "Teleported to node at position " + pos.x + ", " + pos.y + ", " + pos.z + ".";
+            String logMsg = "All your Pokémon fainted. Teleported to position " + String.format("%.2f", pos.x) + ", " + String.format("%.2f", pos.y) + ", " + String.format("%.2f", pos.z) + ".";
             p.sendMessage(Text.of(logMsg));
             return true;
        } 

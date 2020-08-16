@@ -11,6 +11,7 @@ public class CheckPlayerUtility {
     public static boolean playerTeamFainted(Player p)
     {
         PlayerPartyStorage storage = Pixelmon.storageManager.getParty(p.getUniqueId());
+
         for(int i=0; i<6; i++)
         {
             Pokemon poke = storage.get(i);

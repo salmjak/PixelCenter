@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.UUID;
 import javax.vecmath.Vector3d;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -42,8 +43,7 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
-import com.pixelmonmod.pixelmon.api.events.PlayerBattleEndedEvent;
-import com.pixelmonmod.pixelmon.api.events.PlayerBattleEndedAbnormalEvent;
+import com.pixelmonmod.pixelmon.api.events.battles.BattleEndEvent;
 import com.pixelmonmod.pixelmon.Pixelmon;
 import java.util.concurrent.TimeUnit;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -54,7 +54,7 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.0.8",
+        version = "0.0.9",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
@@ -151,7 +151,7 @@ public class PixelCenter {
        if(TeleportUtility.isForced)
        {
            scheduler = Sponge.getScheduler().createSyncExecutor(this);
-           scheduler.scheduleAtFixedRate(new CheckPlayerTeams(), 5, 5, TimeUnit.SECONDS);
+           scheduler.scheduleAtFixedRate(new CheckPlayerTeams(), 250, 250, TimeUnit.MILLISECONDS);
        }
        log.info("DEBUG: Server started. Plugin running.");
     }
@@ -181,27 +181,37 @@ public class PixelCenter {
             }
         }
     }
-    
+
     @SubscribeEvent
-    public void onBattleEndedEvent(PlayerBattleEndedEvent event)
+    public void onBattleEndEvent(BattleEndEvent event)
     {
-        CheckTeamAndTP((Player)event.player);
-    }
-    
-    @SubscribeEvent
-    public void onBattleEndedAbnormalEvent(PlayerBattleEndedAbnormalEvent event)
-    {
-        CheckTeamAndTP((Player)event.player);
+        for(EntityPlayerMP p : event.getPlayers())
+        {
+            CheckTeamAndTP((Player)p);
+        }
     }
     
     class CheckPlayerTeams implements Runnable
     {
+        int k=0;
+        int b = 10;
         @Override
         public void run() {
             ArrayList<Player> players = Lists.newArrayList(Sponge.getServer().getOnlinePlayers());
-            for(Player p : players)
+            for(int i=b*k; i<(b*k)+b; i++)
             {
-                CheckTeamAndTP(p);
+                if(i >= players.size())
+                {
+                    break;
+                }
+
+                CheckTeamAndTP(players.get(i));
+            }
+
+            //We have looped through all online players, return to 0.
+            if(k*b >= players.size())
+            {
+                k=0;
             }
         }
     }

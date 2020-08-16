@@ -58,7 +58,7 @@ public class SetRespawn implements CommandExecutor
             {
                 Save(p.getUniqueId(), closest);
                 
-                p.sendMessage(Text.of("Position " + closest.x +", " + closest.y + ", " + closest.z + " has been set as spawn"));
+                p.sendMessage(Text.of("Position " + String.format("%.2f",closest.x) +", " + String.format("%.2f", closest.y) + ", " + String.format("%.2f", closest.z) + " has been set as spawn"));
             } 
             else 
             {
@@ -69,7 +69,7 @@ public class SetRespawn implements CommandExecutor
         {
             Save(p.getUniqueId(), closest);
                 
-            p.sendMessage(Text.of("Position " + closest.x +", " + closest.y + ", " + closest.z + " has been set as spawn"));
+            p.sendMessage(Text.of("Position " + String.format("%.2f", closest.x) +", " + String.format("%.2f", closest.y) + ", " + String.format("%.2f", closest.z) + " has been set as spawn"));
         }
     }
     
