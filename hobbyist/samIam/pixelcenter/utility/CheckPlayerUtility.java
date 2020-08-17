@@ -12,6 +12,12 @@ public class CheckPlayerUtility {
     {
         PlayerPartyStorage storage = Pixelmon.storageManager.getParty(p.getUniqueId());
 
+        //Dont attempt TP if the player has no pokemon
+        if(storage.pokedex.countCaught() == 0)
+        {
+            return false;
+        }
+
         for(int i=0; i<6; i++)
         {
             Pokemon poke = storage.get(i);

@@ -54,7 +54,7 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 (
         id = "pixelcenter",
         name = "PixelCenter",
-        version = "0.0.9",
+        version = "0.1.0",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Like SafePlace, but worse (or maybe better, nothing guaranteed).",
         authors = "samIam"
