@@ -13,9 +13,11 @@ public class NodeGeneralUtility {
         //Iterate over all nodes to get the closest one
         for(Vector3d v3 : to)
         {
-            if(EuclidianDistance(from, v3) < score)
+            double newScore = EuclidianDistance(from, v3);
+            if(newScore < score)
             {
                 closest_node = v3;
+                score = newScore;
             }
         }
         
